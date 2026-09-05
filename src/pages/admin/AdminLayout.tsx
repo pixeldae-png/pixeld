@@ -7,6 +7,7 @@ export default function AdminLayout() {
   const links = [
     { to: '/admin', label: 'Overview', end: true },
     { to: '/admin/projects', label: 'Projects', end: false },
+    { to: '/admin/contact', label: 'Contact', end: false },
     { to: '/admin/social', label: 'Social links', end: false },
   ]
 

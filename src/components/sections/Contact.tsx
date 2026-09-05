@@ -1,7 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { site } from '../../data/site'
 import { gsap } from '../../lib/gsapSetup'
 import { RollText } from '../ui/roll-text'
+import { loadContactSettings } from '../../lib/contactSettings'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -12,6 +13,18 @@ export function Contact() {
   const finaleRefs = useRef<(HTMLSpanElement | null)[]>([])
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [contactEmail, setContactEmail] = useState<string>(site.contact.email)
+
+  useEffect(() => {
+    let cancelled = false
+    loadContactSettings().then((settings) => {
+      if (!cancelled) setContactEmail(settings.email)
+    }).catch(() => {})
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useLayoutEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -127,8 +140,8 @@ export function Contact() {
 
         <p className="mt-8 text-center text-[13px] text-mist">
           Or email directly at{' '}
-          <a href={`mailto:${site.contact.email}`} className="font-semibold text-ink underline underline-offset-4">
-            {site.contact.email}
+          <a href={`mailto:${contactEmail}`} className="font-semibold text-ink underline underline-offset-4">
+            {contactEmail}
           </a>
         </p>
       </div>

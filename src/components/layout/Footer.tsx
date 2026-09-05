@@ -3,13 +3,16 @@ import { TextEffect } from '../ui/text-effect'
 import { RollText } from '../ui/roll-text'
 import { useEffect, useState } from 'react'
 import { emptySocialLinks, loadSocialLinks, socialPlatforms } from '../../lib/socialLinks'
+import { loadContactSettings } from '../../lib/contactSettings'
 
 export function Footer() {
   const year = new Date().getFullYear()
   const [socialLinks, setSocialLinks] = useState(emptySocialLinks)
+  const [contactEmail, setContactEmail] = useState<string>(site.contact.email)
   useEffect(() => {
     let cancelled = false
     loadSocialLinks().then(links => { if (!cancelled) setSocialLinks(links) }).catch(() => {})
+    loadContactSettings().then(settings => { if (!cancelled) setContactEmail(settings.email) }).catch(() => {})
     return () => { cancelled = true }
   }, [])
 
@@ -24,8 +27,8 @@ export function Footer() {
                 <a href="#contact" className="hover:text-ink">Book a Call</a>
               </li>
               <li>
-                <a href={`mailto:${site.contact.email}`} className="hover:text-ink">
-                  {site.contact.email}
+                <a href={`mailto:${contactEmail}`} className="hover:text-ink">
+                  {contactEmail}
                 </a>
               </li>
             </ul>

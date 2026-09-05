@@ -6,8 +6,12 @@
 interface Env {
   RESEND_API_KEY: string
   RESEND_FROM_EMAIL: string
-  CONTACT_RECEIVER_EMAIL: string
+  CONTACT_RECEIVER_EMAIL?: string
+  VITE_SUPABASE_URL?: string
 }
+
+const fallbackSupabaseUrl = 'https://plmlbjzlqrzjzsdybgvm.supabase.co'
+const fallbackReceiverEmail = 'hello@pixeld.studio'
 
 // Best-effort in-memory rate limit (per edge isolate — resets on cold start).
 // Good enough to stop naive spam bursts; for stronger protection add
@@ -33,6 +37,25 @@ function escapeHtml(input: string) {
 }
 
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+async function getReceiverEmail(env: Env) {
+  const configured = env.CONTACT_RECEIVER_EMAIL?.trim()
+  if (configured && emailRe.test(configured)) return configured
+
+  try {
+    const baseUrl = (env.VITE_SUPABASE_URL || fallbackSupabaseUrl).replace(/\/$/, '')
+    const res = await fetch(`${baseUrl}/storage/v1/object/public/project-media/settings/contact-settings.json`, {
+      cache: 'no-store',
+    })
+    if (!res.ok) return fallbackReceiverEmail
+
+    const saved: unknown = await res.json()
+    const email = saved && typeof saved === 'object' ? (saved as Record<string, unknown>).email : ''
+    return typeof email === 'string' && emailRe.test(email.trim()) ? email.trim().toLowerCase() : fallbackReceiverEmail
+  } catch {
+    return fallbackReceiverEmail
+  }
+}
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
@@ -73,6 +96,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   `
 
   try {
+    const receiverEmail = await getReceiverEmail(env)
+
     const notifyRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -81,7 +106,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       },
       body: JSON.stringify({
         from: env.RESEND_FROM_EMAIL,
-        to: env.CONTACT_RECEIVER_EMAIL,
+        to: receiverEmail,
         reply_to: email,
         subject: `New inquiry from ${name}`,
         html: notifyHtml,

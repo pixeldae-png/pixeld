@@ -20,6 +20,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
 const AdminProjects = lazy(() => import('./pages/admin/AdminProjects'))
 const AdminProjectForm = lazy(() => import('./pages/admin/AdminProjectForm'))
 const AdminSocial = lazy(() => import('./pages/admin/AdminSocial'))
+const AdminContact = lazy(() => import('./pages/admin/AdminContact'))
 
 function SiteShell() {
   const location = useLocation()
@@ -85,6 +86,7 @@ export default function App() {
             >
               <Route index element={<AdminDashboard />} />
               <Route path="projects" element={<AdminProjects />} />
+              <Route path="contact" element={<AdminContact />} />
               <Route path="social" element={<AdminSocial />} />
               <Route path="projects/new" element={<AdminProjectForm />} />
               <Route path="projects/:id" element={<AdminProjectForm />} />
