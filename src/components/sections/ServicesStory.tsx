@@ -3,6 +3,7 @@ import { site } from '../../data/site'
 import { Shape } from '../decor/Shape'
 import { gsap } from '../../lib/gsapSetup'
 import type { ShapeKind } from '../decor/Shape'
+import { MobileServices } from './MobileServices'
 
 const shapeCycle: { kind: ShapeKind; color: 'coral' | 'teal' | 'violet' | 'sky' | 'lime' }[] = [
   { kind: 'sphere', color: 'coral' },
@@ -23,6 +24,8 @@ export function ServicesStory() {
   const dotRefs = useRef<(HTMLSpanElement | null)[]>([])
 
   useLayoutEffect(() => {
+    const media = gsap.matchMedia()
+    media.add('(min-width: 640px)', () => {
     const ctx = gsap.context(() => {
       const items = site.services
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -73,11 +76,14 @@ export function ServicesStory() {
     }, sectionRef)
 
     return () => ctx.revert()
+    })
+    return () => media.revert()
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative">
-      <div ref={stageRef} className="relative flex min-h-[100svh] items-center overflow-hidden px-6">
+    <section id="services" ref={sectionRef} className="relative">
+      <MobileServices />
+      <div ref={stageRef} className="relative hidden min-h-[100svh] items-center overflow-hidden px-6 sm:flex">
         <div className="absolute right-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-2.5 sm:flex lg:right-8">
           {site.services.map((s, i) => (
             <span

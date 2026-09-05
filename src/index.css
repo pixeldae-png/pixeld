@@ -35,7 +35,7 @@ body {
 }
 
 @media (max-width: 639px) {
-  .hero-shape-art { width: 46px !important; height: 46px !important; }
+  .hero-shape-art { width: 58px !important; height: 58px !important; }
   .hero-shape-0 { left: 3%; top: 15%; }
   .hero-shape-1 { right: 3%; top: 19%; }
   .hero-shape-2 { left: 2%; top: 37%; }
@@ -45,9 +45,29 @@ body {
   .about-shape-left { top: 65px; left: 7%; }
   .about-shape-right { top: auto; bottom: 32px; right: 7%; }
   input, textarea, select { font-size: 16px !important; }
+  .hero-content { isolation: isolate; }
+  .hero-content:before { content: ''; position: absolute; inset: -24px -24px; z-index: -1; background: linear-gradient(transparent, #fff 22%, #fff 85%, transparent); pointer-events: none; }
+  .mobile-services { padding: 64px 20px 48px; background: #f5f4f9; }
+  .mobile-services-heading { padding: 0 4px 38px; }
+  .mobile-services-heading>p { font-size: 12px; letter-spacing: .13em; color: #6b647b; font-weight: 600; }
+  .mobile-services-heading h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(36px, 10vw, 56px); font-weight: 800; letter-spacing: -.05em; line-height: 1.08; margin: 20px 0; }
+  .mobile-services-heading>span { font-size: 14px; color: #6b647b; }
+  .mobile-service-deck { padding-bottom: 24px; }
+  .mobile-service-card { position: sticky; top: 100px; transform-origin: center top; background: #fff; border: 1px solid #e5e0f0; border-radius: 24px; padding: 26px; margin-bottom: 32px; box-shadow: 0 12px 34px #27203b0b; }
+  .mobile-service-card:nth-child(even) { background: #eeebfa; }
+  .mobile-service-top { display: flex; align-items: center; justify-content: space-between; min-height: 82px; margin-bottom: 18px; }
+  .mobile-service-top>span { font-size: 14px; font-weight: 600; letter-spacing: .08em; color: #776693; }
+  .mobile-service-content h3 { font-size: clamp(27px, 7.5vw, 38px); font-weight: 700; letter-spacing: -.035em; line-height: 1.15; }
+  .mobile-service-content p { font-size: 16px; line-height: 1.65; margin-top: 20px; color: #625c70; }
+  .mobile-service-content a { display: flex; justify-content: space-between; gap: 16px; align-items: center; min-height: 48px; font-size: 14px; margin-top: 24px; border-top: 1px solid #ded8ea; padding-top: 16px; }
+  .mobile-service-content a:active { color: #7c6cf2; }
+}
+@media (max-width: 639px) and (max-height: 650px) {
+  .mobile-service-card { position: relative; top: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mobile-service-card { position: relative; top: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

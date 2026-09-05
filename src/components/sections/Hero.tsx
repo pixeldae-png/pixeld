@@ -41,9 +41,33 @@ export function Hero() {
   const shapeRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useLayoutEffect(() => {
+    const media = gsap.matchMedia()
+    media.add({ mobile: '(max-width: 639px)', desktop: '(min-width: 640px)', reduced: '(prefers-reduced-motion: reduce)' }, () => {
     const ctx = gsap.context(() => {
       const shapes = shapeRefs.current.filter(Boolean) as HTMLDivElement[]
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      if (window.matchMedia('(max-width: 639px)').matches) {
+        // Entrance, idle and scroll transforms each own a separate wrapper.
+        const entrance = gsap.timeline({ defaults: { ease: 'power3.out' } })
+        entrance.fromTo(wordmarkRef.current, { xPercent: 12, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 1.3 }, 0)
+          .fromTo(portraitRef.current, { y: 65, scale: .86, rotation: -5, opacity: 0 }, { y: 0, scale: 1, rotation: 0, opacity: 1, duration: 1.25 }, .08)
+          .fromTo('.hero-title-word', { yPercent: 110, rotation: 5 }, { yPercent: 0, rotation: 0, duration: .85, stagger: .09 }, .4)
+          .fromTo(rolesRef.current?.children || [], { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: .65, stagger: .08 }, .7)
+          .fromTo([subRef.current, ctaRef.current], { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .7, stagger: .12 }, .9)
+          .fromTo('.hero-shape-arrival', { scale: .35, rotation: -45, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 1.1, stagger: .1 }, .18)
+
+        const scroll = gsap.timeline({ scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: 'bottom top', scrub: .7 }, defaults: { ease: 'none' } })
+        scroll.to(wordmarkExitRef.current, { xPercent: -24, y: 95, duration: 1 }, 0)
+          .to(portraitOuterRef.current, { y: 115, scale: .9, rotation: 4, duration: 1 }, 0)
+        // Keep the heading and CTA readable while the portrait travels behind them.
+        shapeExitRefs.current.forEach((shape, i) => {
+          scroll.to(shape, { y: [-90, 130, -65, 75, -110][i], x: i % 2 ? -14 : 14, rotation: i % 2 ? -65 : 70, duration: 1 }, 0)
+        })
+        const idle = shapes.map((shape, i) => gsap.to(shape, { y: i % 2 ? 10 : -10, x: i % 2 ? -4 : 4, rotation: i % 2 ? -12 : 12, duration: 3.2 + i * .35, ease: 'sine.inOut', repeat: -1, yoyo: true, paused: true }))
+        const visibility = ScrollTrigger.create({ trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', onToggle: self => idle.forEach(t => self.isActive ? t.play() : t.pause()) })
+        if (visibility.isActive) idle.forEach(t => t.play())
+        return
+      }
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
       tl.fromTo(wordmarkRef.current, { autoAlpha: 0, scale: 1.06 }, { autoAlpha: 1, scale: 1, duration: 1.2 })
@@ -165,6 +189,8 @@ export function Hero() {
     }, sectionRef)
 
     return () => ctx.revert()
+    })
+    return () => media.revert()
   }, [])
 
   return (
@@ -188,6 +214,7 @@ export function Hero() {
       {shapeConfig.map((cfg, i) => (
         <div key={cfg.kind + i} aria-hidden="true" className={`hero-shape hero-shape-${i} pointer-events-none absolute ${cfg.pos} z-10`}>
           <div ref={(el) => (shapeExitRefs.current[i] = el)}>
+            <div className="hero-shape-arrival">
             <Shape
               ref={(el) => (shapeRefs.current[i] = el)}
               kind={cfg.kind}
@@ -195,6 +222,7 @@ export function Hero() {
               size={cfg.size}
               className="hero-shape-art"
             />
+            </div>
           </div>
         </div>
       ))}
@@ -211,9 +239,9 @@ export function Hero() {
         </div>
       </div>
 
-      <div ref={contentExitRef} className="relative z-20 -mt-2 flex flex-col items-center text-center sm:-mt-4">
+      <div ref={contentExitRef} className="hero-content relative z-20 -mt-2 flex flex-col items-center text-center sm:-mt-4">
         <h1 ref={headingRef} className="font-display text-[11vw] font-800 leading-[0.95] text-ink sm:text-[64px]">
-          {site.tagline} {site.name}
+          {`${site.tagline} ${site.name}`.split(' ').map((word, i) => <span key={i} className="inline-block overflow-hidden align-bottom"><span className="hero-title-word inline-block">{word}&nbsp;</span></span>)}
         </h1>
 
         <div ref={rolesRef} className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 border-y border-line/70 py-4 text-[14px] font-medium text-ink/80 sm:text-[15px]">
