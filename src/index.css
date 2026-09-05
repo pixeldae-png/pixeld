@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  color-scheme: light;
+  background: #ffffff;
+}
+
+body {
+  @apply bg-paper text-ink font-body antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #0b0c0f;
+  color: #fff;
+}
+
+.font-display {
+  letter-spacing: -0.02em;
+}
+
+/* giant bookend wordmark used in Hero + Footer */
+.wordmark-huge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.8;
+  user-select: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
