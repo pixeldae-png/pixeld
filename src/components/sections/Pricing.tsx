@@ -54,7 +54,7 @@ export function Pricing() {
                   key={f}
                   className={`flex items-start gap-2.5 text-[14px] ${plan.highlighted ? 'text-white/85' : 'text-ink/75'}`}
                 >
-                  <span className={plan.highlighted ? 'text-white' : 'text-ink'}>✓</span>
+                  <span className={`pricing-spark ${plan.highlighted ? 'text-white' : 'text-ink'}`}>✓</span>
                   {f}
                 </li>
               ))}

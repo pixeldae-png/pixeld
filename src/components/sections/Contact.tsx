@@ -89,7 +89,7 @@ export function Contact() {
       <div className="mx-auto max-w-xl">
         <div className="mb-12 text-center">
           <p data-contact-reveal className="mb-4 text-[13px] font-semibold uppercase tracking-[0.14em] text-mist">
-            <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" aria-hidden />
+            <span className="contact-spark mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" aria-hidden />
             Contact
           </p>
           <h2 className="font-display text-[12vw] font-800 uppercase leading-[0.98] text-ink sm:text-[52px]">

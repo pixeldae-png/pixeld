@@ -83,7 +83,7 @@ export function ServicesStory() {
   return (
     <section id="services" ref={sectionRef} className="relative">
       <MobileServices />
-      <div ref={stageRef} className="relative hidden min-h-[100svh] items-center overflow-hidden px-6 sm:flex">
+      <div ref={stageRef} className="service-motion-stage relative hidden min-h-[100svh] items-center overflow-hidden px-6 sm:flex">
         <div className="absolute right-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-2.5 sm:flex lg:right-8">
           {site.services.map((s, i) => (
             <span

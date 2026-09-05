@@ -4,6 +4,13 @@ import { supabase } from '../../lib/supabase'
 import { uploadProjectImage } from '../../lib/upload'
 import { ImageUploader } from '../../components/admin/ImageUploader'
 import type { Project, ProjectImage } from '../../types'
+import {
+  defaultProjectImageSetting,
+  loadProjectImageSettings,
+  saveProjectImageSetting,
+  type ProjectImageSetting,
+  type ProjectImageSettings,
+} from '../../lib/projectImageSettings'
 
 const empty = {
   title: '',
@@ -33,6 +40,7 @@ export default function AdminProjectForm() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState(empty)
+  const [imageSetting, setImageSetting] = useState<ProjectImageSetting>(defaultProjectImageSetting)
   const [gallery, setGallery] = useState<ProjectImage[]>([])
   const [loading, setLoading] = useState(!isNew)
   const [saving, setSaving] = useState(false)
@@ -49,6 +57,7 @@ export default function AdminProjectForm() {
         .maybeSingle()
       if (data) {
         const p = data as Project
+        const imageSettings: ProjectImageSettings = await loadProjectImageSettings().catch(() => ({}))
         setForm({
           title: p.title,
           slug: p.slug,
@@ -62,6 +71,7 @@ export default function AdminProjectForm() {
           featured: p.featured,
           visible: p.visible,
         })
+        setImageSetting(imageSettings[p.id] || defaultProjectImageSetting())
         setGallery(p.images || [])
         setSlugTouched(true)
       }
@@ -92,25 +102,38 @@ export default function AdminProjectForm() {
       visible: form.visible,
     }
 
-    if (isNew) {
-      const { data: maxRow } = await supabase
-        .from('projects')
-        .select('sort_order')
-        .order('sort_order', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-      const nextSort = (maxRow?.sort_order ?? -1) + 1
+    try {
+      if (isNew) {
+        const { data: maxRow } = await supabase
+          .from('projects')
+          .select('sort_order')
+          .order('sort_order', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        const nextSort = (maxRow?.sort_order ?? -1) + 1
 
-      const { error } = await supabase.from('projects').insert({ ...payload, sort_order: nextSort })
-      if (error) setError(error.message)
-      else navigate('/admin/projects')
-    } else {
-      const { error } = await supabase.from('projects').update(payload).eq('id', id)
-      if (error) setError(error.message)
-      else navigate('/admin/projects')
+        const { error } = await supabase.from('projects').insert({ ...payload, sort_order: nextSort })
+        if (error) {
+          setError(error.message)
+        } else {
+          const { data } = await supabase.from('projects').select('id').eq('slug', payload.slug).maybeSingle()
+          if (data?.id) await saveProjectImageSetting(data.id, imageSetting)
+          navigate('/admin/projects')
+        }
+      } else if (id) {
+        const { error } = await supabase.from('projects').update(payload).eq('id', id)
+        if (error) {
+          setError(error.message)
+        } else {
+          await saveProjectImageSetting(id, imageSetting)
+          navigate('/admin/projects')
+        }
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not save project.')
+    } finally {
+      setSaving(false)
     }
-
-    setSaving(false)
   }
 
   async function handleGalleryUpload(file: File | undefined) {
@@ -203,6 +226,64 @@ export default function AdminProjectForm() {
 
         <ImageUploader label="Cover Image" value={form.cover_image} onChange={(url) => setForm((f) => ({ ...f, cover_image: url }))} />
 
+        <div className="rounded-2xl border border-line bg-white p-4">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <label className="block text-[13px] font-semibold text-ink">Cover Image Frame</label>
+              <p className="mt-1 text-[12px] text-mist">Adjust how the image sits in the project card.</p>
+            </div>
+            <select
+              value={imageSetting.fit}
+              onChange={(e) => setImageSetting((current) => ({ ...current, fit: e.target.value === 'cover' ? 'cover' : 'contain' }))}
+              className="field max-w-32"
+            >
+              <option value="contain">Fit</option>
+              <option value="cover">Fill</option>
+            </select>
+          </div>
+
+          {form.cover_image && (
+            <div className="mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-line">
+              <img
+                src={form.cover_image}
+                alt=""
+                className={`h-full w-full ${imageSetting.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
+                style={{
+                  objectPosition: `${imageSetting.x}% ${imageSetting.y}%`,
+                  transform: `scale(${imageSetting.scale / 100})`,
+                }}
+              />
+            </div>
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <RangeField
+              label="Size"
+              value={imageSetting.scale}
+              min={70}
+              max={180}
+              onChange={(value) => setImageSetting((current) => ({ ...current, scale: value }))}
+              suffix="%"
+            />
+            <RangeField
+              label="Left / Right"
+              value={imageSetting.x}
+              min={0}
+              max={100}
+              onChange={(value) => setImageSetting((current) => ({ ...current, x: value }))}
+              suffix="%"
+            />
+            <RangeField
+              label="Up / Down"
+              value={imageSetting.y}
+              min={0}
+              max={100}
+              onChange={(value) => setImageSetting((current) => ({ ...current, y: value }))}
+              suffix="%"
+            />
+          </div>
+        </div>
+
         <div className="flex items-center gap-6">
           <label className="flex items-center gap-2 text-[13px] text-ink/80">
             <input type="checkbox" checked={form.featured} onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))} />
@@ -276,5 +357,38 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <label className="mb-1.5 block text-[13px] font-semibold text-ink">{label}</label>
       {children}
     </div>
+  )
+}
+
+function RangeField({
+  label,
+  value,
+  min,
+  max,
+  suffix,
+  onChange,
+}: {
+  label: string
+  value: number
+  min: number
+  max: number
+  suffix: string
+  onChange: (value: number) => void
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 flex items-center justify-between text-[13px] font-semibold text-ink">
+        {label}
+        <span className="text-mist">{value}{suffix}</span>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full accent-ink"
+      />
+    </label>
   )
 }

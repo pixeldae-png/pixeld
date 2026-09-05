@@ -71,7 +71,7 @@ export function About() {
 
       <div className="relative z-10 mx-auto max-w-2xl text-center">
         <div ref={labelRef} className="mb-6 flex items-center justify-center gap-2 text-[13px] font-semibold text-mist">
-          <span className="h-1.5 w-1.5 rounded-sm bg-ink" />
+          <span className="contact-spark h-1.5 w-1.5 rounded-sm bg-ink" />
           <TextShimmer>{site.about.label}</TextShimmer>
         </div>
         <h2 ref={headingRef} className="font-display text-[9vw] font-800 leading-[1.05] text-ink sm:text-[42px]">

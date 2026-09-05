@@ -85,6 +85,11 @@ body {
 .text-effect-word { white-space: nowrap; }
 .text-shimmer { background: linear-gradient(110deg,#73737d 25%,#a78bfa 45%,#18181b 50%,#73737d 65%); background-size: 250% 100%; background-clip: text; -webkit-background-clip: text; color: transparent; }
 .site-scroll-progress { position: fixed; inset: 0 0 auto; height: 3px; background: #9872ef; transform-origin: left; z-index: 100; pointer-events: none; }
+.kinetic-overlay { --kx: 50vw; --ky: 50vh; position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .38; mix-blend-mode: multiply; }
+.kinetic-overlay-line { position: absolute; display: block; background: #1111110f; }
+.kinetic-overlay-line-x { left: 0; right: 0; top: var(--ky); height: 1px; transform: translateY(-.5px); }
+.kinetic-overlay-line-y { top: 0; bottom: 0; left: var(--kx); width: 1px; transform: translateX(-.5px); }
+.kinetic-overlay-cursor { position: absolute; left: var(--kx); top: var(--ky); width: 48px; height: 48px; border: 1px solid #11111124; border-radius: 50%; transform: translate(-50%,-50%); transition: width .25s, height .25s, border-color .25s; }
 .infinite-slider { overflow: hidden; padding: 10px 0; }
 .infinite-slider-track { display: flex; width: max-content; animation: toolkit-travel 35s linear infinite; animation-play-state: paused; }
 .infinite-slider[data-visible="true"] .infinite-slider-track { animation-play-state: running; }
@@ -99,6 +104,10 @@ body {
 .toolkit-tile:hover { transform: translateY(-5px) rotate(-1deg); box-shadow: 0 12px 25px #11111108; }.toolkit-tile:hover .toolkit-arrow { transform: translate(3px,-3px); }
 .toolkit-pause:hover, .toolkit-pause:focus-visible { background: #f1edff; color: #171717; }
 @keyframes toolkit-travel { to { transform: translateX(-50%); } }
+.service-motion-stage::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .4; background-image: linear-gradient(#1010140a 1px, transparent 1px), linear-gradient(90deg,#1010140a 1px, transparent 1px); background-size: 54px 54px; animation: grid-drift 18s linear infinite; mask-image: radial-gradient(circle at center,#000 0 42%,transparent 72%); }
+.service-motion-stage::after { content: ''; position: absolute; left: 12%; right: 12%; top: 50%; height: 1px; pointer-events: none; background: linear-gradient(90deg,transparent,#11111122,transparent); transform-origin: center; animation: rail-breathe 4.8s ease-in-out infinite; }
+@keyframes grid-drift { to { background-position: 54px 54px, 54px 54px; } }
+@keyframes rail-breathe { 0%,100% { transform: scaleX(.72); opacity: .28; } 50% { transform: scaleX(1); opacity: .72; } }
 .motion-card-shell { min-width: 0; perspective: 1000px; }
 .motion-card-surface { height: 100%; position: relative; isolation: isolate; transform: rotateX(var(--card-rx,0deg)) rotateY(var(--card-ry,0deg)); transition: transform .35s ease, box-shadow .35s ease; }
 .motion-card-shell:hover .motion-card-surface, .motion-card-shell:focus-within .motion-card-surface { box-shadow: 0 24px 50px #25194d14; }
@@ -108,12 +117,22 @@ body {
 .roll-text > span { display: block; transition: transform .45s cubic-bezier(.22,1,.36,1); }.roll-text > span + span { position: absolute; inset: 100% 0 auto; }
 a:hover .roll-text > span, button:hover .roll-text > span, a:focus-visible .roll-text > span, button:focus-visible .roll-text > span { transform: translateY(-100%); }
 .kinetic-button { transition: background .3s, box-shadow .3s, transform .3s; }.kinetic-button:hover { box-shadow: 0 8px 25px #8870bb30; }
-.project-motion-frame { isolation: isolate; }.project-motion-frame:focus-within .project-motion-caption { opacity: 1; }
+.project-motion-frame { isolation: isolate; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.22,1,.36,1), box-shadow .55s; }.project-motion-frame:hover { transform: translateY(-8px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 28px 65px #21193616; }.project-motion-frame:focus-within .project-motion-caption { opacity: 1; }
+.project-motion-frame img { transition: transform .65s cubic-bezier(.22,1,.36,1), filter .65s; will-change: transform; }
+.project-motion-frame:hover img { filter: saturate(1.05) contrast(1.02); }
+.project-sheen { position: absolute; inset: -40%; z-index: 1; background: linear-gradient(115deg,transparent 35%,#ffffff45 48%,transparent 61%); transform: translateX(-55%) rotate(6deg); opacity: 0; transition: transform .8s cubic-bezier(.22,1,.36,1), opacity .4s; pointer-events: none; }
+.project-motion-frame:hover .project-sheen { opacity: 1; transform: translateX(55%) rotate(6deg); }
+.project-motion-caption { z-index: 2; }
+.pricing-spark, .service-spark, .contact-spark { animation: tiny-pulse 2.8s ease-in-out infinite; }
+@keyframes tiny-pulse { 0%,100% { transform: scale(1); opacity: .75; } 50% { transform: scale(1.45); opacity: 1; } }
+.field, .input { transition: border-color .25s, box-shadow .25s, transform .25s; }
+.field:focus, .input:focus { transform: translateY(-1px); box-shadow: 0 10px 22px #11111108; }
 .mobile-navigation { animation: menu-arrive .4s both; }.mobile-navigation > button { animation: menu-arrive .45s both; }.mobile-navigation > button:nth-child(2) { animation-delay: .04s; }.mobile-navigation > button:nth-child(3) { animation-delay: .08s; }.mobile-navigation > button:nth-child(4) { animation-delay: .12s; }.mobile-navigation > button:nth-child(5) { animation-delay: .16s; }
 @keyframes menu-arrive { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 #contact .input { transition: border-color .25s, box-shadow .25s, background .25s; }#contact .input:focus { box-shadow: 0 0 0 4px #a78bfa18; background: #fdfcff; border-color: #a78bfa; }
 @media (pointer: coarse) { .project-motion-caption { opacity: 1 !important; }.toolkit-tile { width: 200px; min-height: 100px; padding: 16px; } }
+@media (pointer: coarse), (max-width: 767px) { .kinetic-overlay { display: none; }.project-motion-frame:hover { transform: none; box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) {
   .infinite-slider-track { animation: none; width: 100%; }.infinite-slider-group { flex-wrap: wrap; justify-content: center; padding: 0 16px; }.infinite-slider-copy { display: none; }.toolkit-rows { mask-image: none; }.toolkit-tile { width: auto; min-width: 145px; flex: 1; }.toolkit-pause { display: none; }
-  .motion-card-surface, .roll-text > span, .toolkit-tile, .toolkit-arrow { transform: none !important; transition: none; }.mobile-navigation, .mobile-navigation > button { animation: none; }.text-shimmer { background: none; color: inherit; }
+  .motion-card-surface, .roll-text > span, .toolkit-tile, .toolkit-arrow, .project-motion-frame, .field, .input { transform: none !important; transition: none; }.mobile-navigation, .mobile-navigation > button, .pricing-spark, .service-spark, .contact-spark { animation: none; }.text-shimmer { background: none; color: inherit; }.kinetic-overlay, .project-sheen { display: none; }
 }
