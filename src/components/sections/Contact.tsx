@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { site } from '../../data/site'
 import { gsap } from '../../lib/gsapSetup'
+import { RollText } from '../ui/roll-text'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -13,6 +14,7 @@ export function Contact() {
   const [errorMsg, setErrorMsg] = useState('')
 
   useLayoutEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       const lines = finaleRefs.current.filter(Boolean) as HTMLSpanElement[]
 
@@ -30,7 +32,7 @@ export function Contact() {
 
       gsap.fromTo(
         '[data-contact-reveal]',
-        { autoAlpha: 0, y: 24 },
+        { autoAlpha: 1, y: 24 },
         {
           autoAlpha: 1,
           y: 0,
@@ -118,7 +120,7 @@ export function Contact() {
               disabled={status === 'loading'}
               className="w-full rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white transition-transform hover:scale-[1.01] disabled:opacity-60"
             >
-              {status === 'loading' ? 'Sending…' : 'Send Message'}
+              <RollText>{status === 'loading' ? 'Sending…' : 'Send Message'}</RollText>
             </button>
           </form>
         )}

@@ -2,6 +2,8 @@ import { useLayoutEffect, useRef } from 'react'
 import { site } from '../../data/site'
 import { Shape } from '../decor/Shape'
 import { gsap, ScrollTrigger } from '../../lib/gsapSetup'
+import { TextEffect } from '../ui/text-effect'
+import { TextShimmer } from '../ui/text-shimmer'
 
 export function About() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -30,18 +32,6 @@ export function About() {
 
       reveal
         .fromTo(labelRef.current, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.6 })
-        .fromTo(
-          headingRef.current,
-          { clipPath: 'inset(0 0 100% 0)', autoAlpha: 0, y: 16 },
-          { clipPath: 'inset(0 0 0% 0)', autoAlpha: 1, y: 0, duration: 0.9, ease: 'power4.out' },
-          '-=0.3',
-        )
-        .fromTo(
-          lines,
-          { clipPath: 'inset(0 0 100% 0)', autoAlpha: 0, y: 14 },
-          { clipPath: 'inset(0 0 0% 0)', autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.15, ease: 'power3.out' },
-          '-=0.5',
-        )
         .fromTo(
           [shapeLeftRef.current, shapeRightRef.current],
           { autoAlpha: 0, scale: 0.7, rotate: -16 },
@@ -82,15 +72,15 @@ export function About() {
       <div className="relative z-10 mx-auto max-w-2xl text-center">
         <div ref={labelRef} className="mb-6 flex items-center justify-center gap-2 text-[13px] font-semibold text-mist">
           <span className="h-1.5 w-1.5 rounded-sm bg-ink" />
-          {site.about.label}
+          <TextShimmer>{site.about.label}</TextShimmer>
         </div>
         <h2 ref={headingRef} className="font-display text-[9vw] font-800 leading-[1.05] text-ink sm:text-[42px]">
-          {site.about.heading}
+          <TextEffect per="char">{site.about.heading}</TextEffect>
         </h2>
         <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-mist">
           {site.about.paragraphs.map((p, i) => (
             <p key={p} ref={(el) => (lineRefs.current[i] = el)}>
-              {p}
+              <TextEffect preset="scroll">{p}</TextEffect>
             </p>
           ))}
         </div>

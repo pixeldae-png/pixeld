@@ -7,6 +7,7 @@ import { ProtectedRoute } from './components/admin/ProtectedRoute'
 import { initSmoothScroll, destroySmoothScroll } from './lib/smoothScroll'
 import { ScrollTrigger } from './lib/gsapSetup'
 import { ParticleTextEffect } from './components/ui/particle-text-effect'
+import { ScrollProgress } from './components/decor/ScrollProgress'
 
 import Home from './pages/Home'
 import ProjectDetail from './pages/ProjectDetail'
@@ -29,6 +30,7 @@ function SiteShell() {
   return (
     <>
       <Nav />
+      <ScrollProgress />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects/:slug" element={<ProjectDetail />} />

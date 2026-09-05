@@ -1,4 +1,6 @@
 import { site } from '../../data/site'
+import { TextEffect } from '../ui/text-effect'
+import { RollText } from '../ui/roll-text'
 import { useEffect, useState } from 'react'
 import { emptySocialLinks, loadSocialLinks, socialPlatforms } from '../../lib/socialLinks'
 
@@ -33,7 +35,7 @@ export function Footer() {
             <ul className="space-y-2.5 text-[14px] text-mist">
               {site.nav.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="hover:text-ink">{item.label}</a>
+                  <a href={item.href} className="hover:text-ink"><RollText>{item.label}</RollText></a>
                 </li>
               ))}
             </ul>
@@ -65,7 +67,7 @@ export function Footer() {
         </div>
 
         <div className="wordmark-huge select-none overflow-hidden text-[16vw] leading-[0.78] text-ink/95 sm:text-[15vw]">
-          {site.wordmark}
+          <TextEffect per="char" preset="slide">{site.wordmark}</TextEffect>
         </div>
 
         <div className="mt-8 flex flex-col-reverse items-start justify-between gap-3 text-[12px] text-mist sm:flex-row sm:items-center">

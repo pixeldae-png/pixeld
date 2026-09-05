@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { site } from '../../data/site'
 import { gsap } from '../../lib/gsapSetup'
+import { RollText } from '../ui/roll-text'
 
 export function Nav() {
   const barRef = useRef<HTMLDivElement>(null)
@@ -10,7 +11,7 @@ export function Nav() {
 
   useEffect(() => {
     const el = barRef.current
-    if (!el) return
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.set(el, { y: -80, opacity: 0 })
     gsap.to(el, { y: 0, opacity: 1, duration: 0.9, delay: 0.15, ease: 'power3.out' })
   }, [])
@@ -89,7 +90,7 @@ export function Nav() {
                     isActive ? 'text-ink' : 'text-ink/70 hover:text-ink'
                   }`}
                 >
-                  {item.label}
+                  <RollText>{item.label}</RollText>
                   <span
                     className={`h-[3px] w-[3px] rounded-full bg-accent transition-opacity ${
                       isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
@@ -116,6 +117,8 @@ export function Nav() {
           <button
             className="mr-1 rounded-full p-2 md:hidden"
             aria-label="Toggle menu"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
             onClick={() => setOpen((v) => !v)}
           >
             <div className="space-y-1.5">
@@ -127,7 +130,7 @@ export function Nav() {
         </nav>
 
         {open && (
-          <div className="mt-2 flex flex-col gap-1 rounded-3xl border border-line/70 bg-white/95 p-3 shadow-lg backdrop-blur-md md:hidden">
+          <div id="mobile-navigation" className="mobile-navigation mt-2 flex flex-col gap-1 rounded-3xl border border-line/70 bg-white/95 p-3 shadow-lg backdrop-blur-md md:hidden">
             {site.nav.map((item) => (
               <button
                 key={item.label}
