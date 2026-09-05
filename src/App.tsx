@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Nav } from './components/layout/Nav'
 import { Footer } from './components/layout/Footer'
@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components/admin/ProtectedRoute'
 import { initSmoothScroll, destroySmoothScroll } from './lib/smoothScroll'
 import { ScrollTrigger } from './lib/gsapSetup'
+import { ParticleTextEffect } from './components/ui/particle-text-effect'
 
 import Home from './pages/Home'
 import ProjectDetail from './pages/ProjectDetail'
@@ -20,6 +21,11 @@ const AdminProjectForm = lazy(() => import('./pages/admin/AdminProjectForm'))
 const AdminSocial = lazy(() => import('./pages/admin/AdminSocial'))
 
 function SiteShell() {
+  const location = useLocation()
+  const [introFinished, setIntroFinished] = useState(false)
+  if (location.pathname === '/' && !location.hash && !introFinished) {
+    return <ParticleTextEffect onComplete={() => setIntroFinished(true)} />
+  }
   return (
     <>
       <Nav />
