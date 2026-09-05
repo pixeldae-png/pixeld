@@ -2,7 +2,7 @@ import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from './gsapSetup'
 
 let lenis: Lenis | null = null
-let rafId: number | null = null
+const tick = (time: number) => lenis?.raf(time * 1000)
 
 export function initSmoothScroll() {
   if (lenis) return lenis
@@ -17,16 +17,14 @@ export function initSmoothScroll() {
 
   lenis.on('scroll', ScrollTrigger.update)
 
-  gsap.ticker.add((time) => {
-    lenis?.raf(time * 1000)
-  })
+  gsap.ticker.add(tick)
   gsap.ticker.lagSmoothing(0)
 
   return lenis
 }
 
 export function destroySmoothScroll() {
-  if (rafId) cancelAnimationFrame(rafId)
+  gsap.ticker.remove(tick)
   lenis?.destroy()
   lenis = null
 }

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useId } from 'react'
 
 export type ShapeKind = 'sphere' | 'cube' | 'pyramid' | 'star' | 'cylinder' | 'gem'
 
@@ -22,7 +22,7 @@ interface ShapeProps {
 export const Shape = forwardRef<HTMLDivElement, ShapeProps>(
   ({ kind, color = 'coral', size = 96, className = '', style }, ref) => {
     const [light, dark] = palette[color]
-    const gid = `${kind}-${color}`
+    const gid = `shape-${useId().replace(/:/g, '')}`
 
     return (
       <div

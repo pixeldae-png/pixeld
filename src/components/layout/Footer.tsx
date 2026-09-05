@@ -1,7 +1,15 @@
 import { site } from '../../data/site'
+import { useEffect, useState } from 'react'
+import { emptySocialLinks, loadSocialLinks, socialPlatforms } from '../../lib/socialLinks'
 
 export function Footer() {
   const year = new Date().getFullYear()
+  const [socialLinks, setSocialLinks] = useState(emptySocialLinks)
+  useEffect(() => {
+    let cancelled = false
+    loadSocialLinks().then(links => { if (!cancelled) setSocialLinks(links) }).catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <footer className="border-t border-line">
@@ -33,9 +41,9 @@ export function Footer() {
           <div>
             <h4 className="mb-4 text-[13px] font-semibold text-ink">Social</h4>
             <ul className="space-y-2.5 text-[14px] text-mist">
-              {site.socials.map((s) => (
-                <li key={s.label}>
-                  <a href={s.href} className="hover:text-ink">{s.label}</a>
+              {socialPlatforms.filter(s => socialLinks[s.id]).map((s) => (
+                <li key={s.id}>
+                  <a href={socialLinks[s.id]} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center hover:text-ink">{s.label} ↗</a>
                 </li>
               ))}
             </ul>

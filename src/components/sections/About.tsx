@@ -18,6 +18,7 @@ export function About() {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       const reveal = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -67,12 +68,12 @@ export function About() {
 
   return (
     <section id="about" ref={sectionRef} className="relative overflow-hidden px-6 py-32 sm:py-40">
-      <div className="absolute left-[6%] top-1/2 hidden -translate-y-1/2 sm:block">
+      <div aria-hidden="true" className="about-shape about-shape-left absolute left-[6%] top-1/2 -translate-y-1/2">
         <div ref={shapeLeftParallaxRef}>
           <Shape ref={shapeLeftRef} kind="cube" color="violet" size={120} />
         </div>
       </div>
-      <div className="absolute right-[6%] top-1/2 hidden -translate-y-1/2 sm:block">
+      <div aria-hidden="true" className="about-shape about-shape-right absolute right-[6%] top-1/2 -translate-y-1/2">
         <div ref={shapeRightParallaxRef}>
           <Shape ref={shapeRightRef} kind="gem" color="sky" size={120} />
         </div>

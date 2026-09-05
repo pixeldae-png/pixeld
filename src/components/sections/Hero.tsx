@@ -43,6 +43,7 @@ export function Hero() {
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const shapes = shapeRefs.current.filter(Boolean) as HTMLDivElement[]
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
       tl.fromTo(wordmarkRef.current, { autoAlpha: 0, scale: 1.06 }, { autoAlpha: 1, scale: 1, duration: 1.2 })
@@ -70,9 +71,9 @@ export function Hero() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: isMobile ? '+=70%' : '+=130%',
+          end: isMobile ? 'bottom top' : '+=130%',
           scrub: 0.6,
-          pin: true,
+          pin: !isMobile,
           pinSpacing: true,
         },
       })
@@ -130,7 +131,7 @@ export function Hero() {
             keyframes: {
               '0%': { x: 0, y: 0, rotate: 0 },
               '35%': { rotate: midRotate },
-              '100%': { x: cfg.drift.x, y: cfg.drift.y, rotate: endRotate },
+              '100%': { x: cfg.drift.x * (isMobile ? 0.25 : 1), y: cfg.drift.y * (isMobile ? 0.4 : 1), rotate: endRotate },
             },
           },
           0,
@@ -140,7 +141,7 @@ export function Hero() {
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const idleTweens = shapes.map((el, i) =>
           gsap.to(el, {
-            y: `+=${10 + i * 3}`,
+            y: `+=${(10 + i * 3) * (isMobile ? 0.5 : 1)}`,
             rotate: `+=${8 + i * 2}`,
             duration: 3.5 + i * 0.6,
             delay: 1.6 + i * 0.15,
@@ -158,6 +159,7 @@ export function Hero() {
           start: 'top bottom',
           end: 'bottom top',
           onToggle: (self) => idleTweens.forEach((t) => (self.isActive ? t.play() : t.pause())),
+          onRefresh: (self) => idleTweens.forEach((t) => (self.isActive ? t.play() : t.pause())),
         })
       }
     }, sectionRef)
@@ -184,14 +186,14 @@ export function Hero() {
       </div>
 
       {shapeConfig.map((cfg, i) => (
-        <div key={cfg.kind + i} className={`absolute ${cfg.pos} z-10`}>
+        <div key={cfg.kind + i} aria-hidden="true" className={`hero-shape hero-shape-${i} pointer-events-none absolute ${cfg.pos} z-10`}>
           <div ref={(el) => (shapeExitRefs.current[i] = el)}>
             <Shape
               ref={(el) => (shapeRefs.current[i] = el)}
               kind={cfg.kind}
               color={cfg.color}
               size={cfg.size}
-              className="hidden sm:block"
+              className="hero-shape-art"
             />
           </div>
         </div>

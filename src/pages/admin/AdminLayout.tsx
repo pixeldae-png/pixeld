@@ -7,6 +7,7 @@ export default function AdminLayout() {
   const links = [
     { to: '/admin', label: 'Overview', end: true },
     { to: '/admin/projects', label: 'Projects', end: false },
+    { to: '/admin/social', label: 'Social links', end: false },
   ]
 
   return (
@@ -18,8 +19,8 @@ export default function AdminLayout() {
         </button>
       </div>
 
-      <div className="mx-auto flex max-w-6xl gap-8 px-6 py-8">
-        <nav className="w-48 shrink-0 space-y-1">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:flex-row sm:gap-8 sm:px-6 sm:py-8">
+        <nav aria-label="Admin navigation" className="flex flex-wrap gap-1 sm:block sm:w-48 sm:shrink-0 sm:space-y-1">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -36,7 +37,7 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        <main className="flex-1">
+        <main className="min-w-0 flex-1">
           <Outlet />
         </main>
       </div>
