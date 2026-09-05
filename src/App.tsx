@@ -9,6 +9,8 @@ import { ScrollTrigger } from './lib/gsapSetup'
 import { ParticleTextEffect } from './components/ui/particle-text-effect'
 import { ScrollProgress } from './components/decor/ScrollProgress'
 import { KineticOverlay } from './components/decor/KineticOverlay'
+import { AmbientCanvas } from './components/decor/AmbientCanvas'
+import { MotionSystem } from './components/decor/MotionSystem'
 
 import Home from './pages/Home'
 import ProjectDetail from './pages/ProjectDetail'
@@ -32,8 +34,10 @@ function SiteShell() {
   return (
     <>
       <Nav />
+      <AmbientCanvas />
       <ScrollProgress />
       <KineticOverlay />
+      <MotionSystem />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects/:slug" element={<ProjectDetail />} />
