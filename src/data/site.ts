@@ -6,8 +6,8 @@ export const site = {
   heroSub:
     'I design and build modern digital experiences for brands that want to stand out.',
   wordmark: 'PIXELD',
-  portrait: '/images/khalid-portrait-2.png',
-  portraitAlt: '/images/khalid-portrait-1.png',
+  portrait: '/images/khalid-portrait-2.png?v=97db5793',
+  portraitAlt: '/images/khalid-portrait-1.png?v=97db5793',
 
   nav: [
     { label: 'Projects', href: '#projects' },
