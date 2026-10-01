@@ -87,7 +87,7 @@ export const site = {
     plans: [
       {
         name: 'Starter Website',
-        price: '800',
+        price: '1,000',
         note: 'From',
         features: [
           'Up to 5 pages',
@@ -101,7 +101,7 @@ export const site = {
       },
       {
         name: 'Advanced Store',
-        price: '1,100',
+        price: '1,600',
         note: 'From',
         features: [
           'Everything in Starter',
@@ -115,7 +115,7 @@ export const site = {
       },
       {
         name: 'Complete Store',
-        price: '1,400',
+        price: '2,000',
         note: 'From',
         features: [
           'Everything in Advanced',
