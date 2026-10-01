@@ -1,11 +1,7 @@
-node_modules
-dist
+node_modules/
+dist/
 .env
 .env.local
+.netlify/
 *.log
-
-.env.*
-!.env.example
-.claude/
-*.mp4
-Codex Image*.png
+assets/
